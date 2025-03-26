@@ -11,6 +11,8 @@ author:
     affiliation_url: https://www.gartenbauwissenschaften.uni-bonn.de/en
 image: "figures/hex-wall.png"
 links:
+  - label: 'HortiBonn'
+    url: "https://www.gartenbauwissenschaften.uni-bonn.de/en"
   - label: '<i class="fab fa-github"></i> GitHub'
     url: "https://github.com/larscaspersen/vignette_custom_phenoflex target='_blank'"
   - label: '<i class="fas fa-envelope"></i> Email'
@@ -21,12 +23,14 @@ output:
 site: distill::distill_website
 ---
 
-# Hi and welcome, fellow phenology modeller and aspirers to become one.
+## Hi and welcome, fellow phenology modeller and aspirers to become one.
 
-This website collects all the different methods to tweak PhenoFlex to your needs. My name is Lars Caspersen and I am a PhD student at the HortiBonn group at the University of Bonn. In my PhD I focused on phenology modeling. For that I mostly relied on PhenoFlex [@luedeling_phenoflex_2021] and accessible via the chillR package [@luedeling_chillr_2023]. I was asked to bundle my learning experience working with PhenoFlex, so I decided to make this website and document my learning experience. To make collaboration with others easier, I bundled my customized functions in two R packages: [LarsChill](https://github.com/larscaspersen/addition_chillR) (package naming may not be my strongsuite) contains general functions supplementing the chillR package and [evalpheno](https://github.com/larscaspersen/eval_phenoflex) contains a collection of customized functions to calculate bloom dates, which become handy when calibrating the PhenoFlex model. These packages are only available via GitHub and not via CRAN and it may happen that parts of the functionalities get absorbed by our flagship package [chillR](https://cran.r-project.org/web/packages/chillR/index.html).
+This website collects all the different methods to tweak PhenoFlex to your needs. My name is [Lars Caspersen](https://www.gartenbauwissenschaften.uni-bonn.de/en/staff/lars-caspersen) and I am a PhD student at the [HortiBonn group](https://www.gartenbauwissenschaften.uni-bonn.de/en) at the University of Bonn. In my PhD I focused on phenology modeling. For that I mostly relied on PhenoFlex [@luedeling_phenoflex_2021] and accessible via the chillR package [@luedeling_chillr_2023]. I was asked to bundle my learning experience working with PhenoFlex, so I decided to make this website and document my learning experience. To make collaboration with others easier, I bundled my customized functions in two R packages: [LarsChill](https://github.com/larscaspersen/addition_chillR) (package naming may not be my strongsuite) contains general functions supplementing the chillR package and [evalpheno](https://github.com/larscaspersen/eval_phenoflex) contains a collection of customized functions to calculate bloom dates, which become handy when calibrating the PhenoFlex model. These packages are only available via GitHub and not via CRAN and it may happen that parts of the functionalities get absorbed by our flagship package [chillR](https://cran.r-project.org/web/packages/chillR/index.html).
 
 This website collects all the different modifications and custom versions of PhenoFlex that I created in the course of my PhD. I hope it can be usefull to make my learning experience accessible to a wider, and yet specialized, audience. If something is not working, if something remains unclear or you want to contact me for any other reason, please do not be shy. You can raise issues in the GitHub repository, that also hosts this website. You can also write me or my supervisor Eike Luedeling a mail, for more information check the left-hand side of the website.
 
 **This collection of vignette does not serve as a general introduction to working with PhenoFlex.** For that, please check out this extremely helpfull [vignette on working with PhenoFlex](https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html) and the course book for the class on [Tree phenology analysis with R](https://inresgb-lehre.iaas.uni-bonn.de/chillR_book/introduction.html). Also, don't be shy to check out the [paper on PhenoFlex](https://www.sciencedirect.com/science/article/pii/S016819232100174X).
 
-## Cited Literature
+---
+
+#### References
