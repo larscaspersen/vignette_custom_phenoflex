@@ -55,11 +55,9 @@ You need to adjust the evaluation functions if you want to use the intermediate 
 chillR::PhenoFlex_GDHwrapper
 
 ```
-
 As you can see, the `PhenoFlex_GDHwrapper` wrapper is a relatively simple funciton. It takes `x` and `par` as inputs. `x` should be of the same format as tge output of the `chillR::genSeasonList()` function, it produces a list of data.frames, each data.frame has three columns: 'Temp', 'JDay' and 'Year'. `par` is a numeric vector with twelve entries, containing the PhenoFlex model parameters. Pay attention, that the order of parameters is correct, otherwise the function may not work or produce funny results. The first par of the code ensures that temperatures of the heat submodel make sense, the base temperature $T_b$ must be lower than optimal temperature $T_u$ and secondly, $T_u$ should not be larger than the critical temperature $T_c$. The next part of the code inserts the model parameters and the temperature data into PhenoFlex. PhenoFlex returns the bloomindex, this is not the bloom date but indicates at which row of the temperature data.frame `x` the accumulated heat exceeds the heat requirement $z_c$. The last part of the code calculates the bloom date, it has a routine what to do when the accumulated heat never exceeds $z_c$ (it returns an `NA` to the `phenologyFitter()` function) or it calculates the Julian Day (with digits). The bloom date calculation looks at first glance a bit complicated, but it accounts for the hour when the requirement is met. When it is met at noon at 12:00, it returns the Julian Day without alteration. If it is earlier, it subtracts a fraction and if it is later than noon it adds a fraction. 
 
 Here is an example with intermediate model parameters:
-
 ```{r gdh_wrapper_modified, message=FALSE, warning=FALSE}
 
 PhenoFlex_GDHwrapper_adjusted <- function (x, par) 
@@ -85,7 +83,6 @@ PhenoFlex_GDHwrapper_adjusted <- function (x, par)
     return(JDay + which(JDaylist == bloomindex)/n - 1/(n/ceiling(n/2)))
 }
 ```
-
 Downside of this approach is, that the conversion happens for each bloom date calculation seperately. But it would be necissary to convert it once and then calculate bloom dates for all the `SeasonList` entries. Unfortunately, the `modelfn` argument is the only way to customize the functions without having to build a whole custom version of `phenologyFitter()` function. I address this shortcoming in the chapter on customized model calibration. 
 
 ## Intermediate chill submodel parameters
