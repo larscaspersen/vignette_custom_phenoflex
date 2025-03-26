@@ -1,0 +1,26 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+# This collection of vignettes in the wider chillR-context.
+
+PhenoFlex is available via the chillR package []. chillR is a versatile R package with lots of functionalities:
+
+- downloading daily observed weather data from databases like GSOD and DWD
+- calculating common agroclimatic variables, such as Chill Portions of the Dynamic Model or Growing Degree Hours from the GDH-model
+- routines to access and process latest climate change projections from CMIP6
+- statistical analyses on tree phenology via PLS-regression
+- forecast tree phenology using PhenoFlex
+- and much more
+
+
+
