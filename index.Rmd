@@ -31,6 +31,10 @@ This website collects all the different modifications and custom versions of Phe
 
 **This collection of vignette does not serve as a general introduction to working with PhenoFlex.** For that, please check out this extremely helpfull [vignette on working with PhenoFlex](https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html) and the course book for the class on [Tree phenology analysis with R](https://inresgb-lehre.iaas.uni-bonn.de/chillR_book/introduction.html). Also, don't be shy to check out the [paper on PhenoFlex](https://www.sciencedirect.com/science/article/pii/S016819232100174X).
 
+#### Acknowledgements
+
+I learned a lot on how to create a website like this from the learning lockbook of Jaqueline Wingen, who participated in the Tree Phenology Analysis with R course. Check out what an amazing website she has build: <https://jacqwng.github.io/Tree-phenology-analysis-with-R/index.html>
+
 ---
 
 #### References
