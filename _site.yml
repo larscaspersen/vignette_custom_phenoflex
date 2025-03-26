@@ -1,0 +1,12 @@
+name: "vignette_custom_phenoflex"
+title: "Custom PhenoFlex"
+theme: my_theme.css
+output_dir: "docs"
+navbar:
+  right: 
+    - text: "Home"
+      href: index.html
+    - text: "Test"
+      href: start.html
+
+output: distill::distill_article
