@@ -6,7 +6,16 @@ navbar:
   right: 
     - text: "Home"
       href: index.html
-    - text: "Test"
-      href: start.html
+    - text: "Customized Model Calibration"
+      menu:
+        - text: "Overview"
+          href: overview_custom-model-calibration.html
+        - text: "Fixing Model Parameters"
+        - text: "Intermediate Model Parameters"
+          href: intermediate-model-parameters.html
+        - text: 'A Mess'
+          href: start.html
+    - text: "Phenology Projections"
+    - text: "Plotting"
 
 output: distill::distill_article
