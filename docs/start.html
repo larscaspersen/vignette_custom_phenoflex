@@ -2627,7 +2627,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <div class="nav-right">
 <a href="index.html">Home</a>
-<a href="start.html">Test</a>
+<a href="start.html">Customized Model Calibration</a>
+<span class="nav-dropdown-header">Phenology Projections</span>
+<span class="nav-dropdown-header">Plotting</span>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
 </nav>
@@ -2702,7 +2704,7 @@ A_0=A_1e^{(\frac{E_0-E_1}{\theta_c})}\\
         return(JDay)
     return(JDay + which(JDaylist == bloomindex)/n - 1/(n/ceiling(n/2)))
 }
-&lt;bytecode: 0x000001e4f1d4c920&gt;
+&lt;bytecode: 0x0000021111f03c30&gt;
 &lt;environment: namespace:chillR&gt;</code></pre>
 </div>
 <p>As you can see, the <code>PhenoFlex_GDHwrapper</code> wrapper is a relatively simple funciton. It takes <code>x</code> and <code>par</code> as inputs. <code>x</code> should be of the same format as tge output of the <code>chillR::genSeasonList()</code> function, it produces a list of data.frames, each data.frame has three columns: ‘Temp’, ‘JDay’ and ‘Year’. <code>par</code> is a numeric vector with twelve entries, containing the PhenoFlex model parameters. Pay attention, that the order of parameters is correct, otherwise the function may not work or produce funny results. The first par of the code ensures that temperatures of the heat submodel make sense, the base temperature <span class="math inline">\(T_b\)</span> must be lower than optimal temperature <span class="math inline">\(T_u\)</span> and secondly, <span class="math inline">\(T_u\)</span> should not be larger than the critical temperature <span class="math inline">\(T_c\)</span>. The next part of the code inserts the model parameters and the temperature data into PhenoFlex. PhenoFlex returns the bloomindex, this is not the bloom date but indicates at which row of the temperature data.frame <code>x</code> the accumulated heat exceeds the heat requirement <span class="math inline">\(z_c\)</span>. The last part of the code calculates the bloom date, it has a routine what to do when the accumulated heat never exceeds <span class="math inline">\(z_c\)</span> (it returns an <code>NA</code> to the <code>phenologyFitter()</code> function) or it calculates the Julian Day (with digits). The bloom date calculation looks at first glance a bit complicated, but it accounts for the hour when the requirement is met. When it is met at noon at 12:00, it returns the Julian Day without alteration. If it is earlier, it subtracts a fraction and if it is later than noon it adds a fraction.</p>
@@ -2793,7 +2795,7 @@ bundle all the different cusotm evaluaiton functions and wrapper functions in a 
     g[5] &lt;- exp((10 * x[6])/(297 * 279))
     return(list(F = F, g = g))
 }
-&lt;bytecode: 0x000001e4fbd6cc80&gt;
+&lt;bytecode: 0x000002111cc22550&gt;
 &lt;environment: namespace:evalpheno&gt;</code></pre>
 </div>
 <p>As you can see, the evaluation functions is actually quite simple. At first we predict bloom dates, using the entries of <code>SeasonList</code>, t the function to calculate bloom dates specified in <code>modelfn</code> and the parameters specified in <code>x</code>(in the vignette for the MEIGOR package they always called the vector of the parameter <code>x</code>, while in PhenoFlex it is the name for the temperature data. Because I was not sure if the naming affected something, I followed the naming convention of the vignette, though it might be confusing.).</p>
