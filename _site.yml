@@ -11,10 +11,11 @@ navbar:
         - text: "Overview"
           href: overview_custom-model-calibration.html
         - text: "Fixing Model Parameters"
+          href: fixing-parameters-before-calibration.html
         - text: "Intermediate Model Parameters"
           href: intermediate-model-parameters.html
-        - text: 'A Mess'
-          href: start.html
+        - text: "Implement another optimization algorithm"
+          href: implement-meigo.html
     - text: "Phenology Projections"
     - text: "Plotting"
 
