@@ -2290,7 +2290,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   /*change url color */
   a {
-    color: #335e51;
+    color: #5aa58e;
   }
 
   a:hover {
@@ -2602,7 +2602,9 @@ Customized Model Calibration
 </button>
 <div class="nav-dropdown-content">
 <a href="overview_custom-model-calibration.html">Overview</a>
-<a href="start.html">A Mess</a>
+<a href="fixing-parameters-before-calibration.html">Fixing Model Parameters</a>
+<a href="intermediate-model-parameters.html">Intermediate Model Parameters</a>
+<a href="implement-meigo.html">Implement another optimization algorithm</a>
 </div>
 </div>
 <span class="nav-dropdown-header">Phenology Projections</span>
@@ -2625,15 +2627,16 @@ Customized Model Calibration
 
 
 <div class="d-article">
-<p>This part is all about calibrating PhenoFlex. The <code>chillR::phenologyFitter()</code> helps you to estimate model parameters. However, the function may not be ideal your specific situation, for example maybe you want to keep some model parameters fixed, maybe you want to tune PhenoFlex using a different global optimization function, or maybe you want to make more substantial changes to PhenoFlex, add additional parameters to the model, pool certain model parameters across cultivars of the same species or maybe you want to model a sequence of phenological events within one model.</p>
-<p>Here, I collected all of the different adjustments you may want to make when calibrating PhenoFlex:</p>
+<p>This section focuses on calibrating <strong>PhenoFlex</strong>. The function <code>chillR::phenologyFitter()</code> is a great starting point for estimating model parameters. However, it may not always be the perfect fit for your specific use case. For example, you might want to:</p>
 <ul>
-<li>fix model parameters</li>
-<li>replace chill submodel-parameters with intermediate, well-defined parameters</li>
-<li>use another calibration algorithm, at the example of Enhanced Scatter Search of the MEIGO R-package</li>
-<li>combined fitting: sharing chill and heat submodel parameters across cultivars of same species while having cultivar-specific requirement and transition parameters</li>
-<li>model sequence of phenology events in one model</li>
+<li><a href="fixing-parameters-before-calibration.html">Keep certain model parameters fixed</a></li>
+<li><a href="implement-meigo.html">Use a different global optimization algorithm</a></li>
+<li><a href="intermediate-model-parameters.html">Replace parameters with intermediate, more narrowly defined ones</a></li>
+<li>Introduce additional parameters to the model</li>
+<li>Share (or <em>pool</em>) parameters across cultivars of the same species</li>
+<li>Or even model a sequence of phenological events within a single framework</li>
 </ul>
+<p>This page brings together a variety of customizations you might consider when calibrating <strong>PhenoFlex</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

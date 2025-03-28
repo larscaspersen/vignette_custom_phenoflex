@@ -5,12 +5,14 @@ bibliography: vignette_phenoflex.bib
 csl: elsevier-harvard-modifed.csl
 ---
 
-This part is all about calibrating PhenoFlex. The `chillR::phenologyFitter()` helps you to estimate model parameters. However, the function may not be ideal your specific situation, for example maybe you want to keep some model parameters fixed, maybe you want to tune PhenoFlex using a different global optimization function, or maybe you want to make more substantial changes to PhenoFlex, add additional parameters to the model, pool certain model parameters across cultivars of the same species or maybe you want to model a sequence of phenological events within one model. 
-
-Here, I collected all of the different adjustments you may want to make when calibrating PhenoFlex:
-
-* fix model parameters
-* replace chill submodel-parameters with intermediate, well-defined parameters
-* use another calibration algorithm, at the example of Enhanced Scatter Search of the MEIGO R-package
-* combined fitting: sharing chill and heat submodel parameters across cultivars of same species while having cultivar-specific requirement and transition parameters
-* model sequence of phenology events in one model
+This section focuses on calibrating **PhenoFlex**. The function `chillR::phenologyFitter()` is a great starting point for estimating model parameters. However, it may not always be the perfect fit for your specific use case. For example, you might want to:
+ 
+ - [Keep certain model parameters fixed](fixing-parameters-before-calibration.html)
+ - [Use a different global optimization algorithm](implement-meigo.html)
+ - [Replace parameters with intermediate, more narrowly defined ones](intermediate-model-parameters.html)
+ - Introduce additional parameters to the model
+ - Share (or *pool*) parameters across cultivars of the same species
+ - Or even model a sequence of phenological events within a single framework
+ 
+ This page brings together a variety of customizations you might consider when calibrating **PhenoFlex**
+ 

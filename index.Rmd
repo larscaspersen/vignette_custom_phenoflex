@@ -23,17 +23,34 @@ output:
 site: distill::distill_website
 ---
 
-## Hi and welcome, fellow phenology modeller and aspirers to become one.
+## Hi and welcome, fellow phenology modellers and aspiring ones!
 
-This website collects all the different methods to tweak PhenoFlex to your needs. My name is [Lars Caspersen](https://www.gartenbauwissenschaften.uni-bonn.de/en/staff/lars-caspersen) and I am a PhD student at the [HortiBonn group](https://www.gartenbauwissenschaften.uni-bonn.de/en) at the University of Bonn. In my PhD I focused on phenology modeling. For that I mostly relied on PhenoFlex [@luedeling_phenoflex_2021] and accessible via the chillR package [@luedeling_chillr_2023]. I was asked to bundle my learning experience working with PhenoFlex, so I decided to make this website and document my learning experience. To make collaboration with others easier, I bundled my customized functions in two R packages: [LarsChill](https://github.com/larscaspersen/addition_chillR) (package naming may not be my strongsuite) contains general functions supplementing the chillR package and [evalpheno](https://github.com/larscaspersen/eval_phenoflex) contains a collection of customized functions to calculate bloom dates, which become handy when calibrating the PhenoFlex model. These packages are only available via GitHub and not via CRAN and it may happen that parts of the functionalities get absorbed by our flagship package [chillR](https://cran.r-project.org/web/packages/chillR/index.html).
+This website compiles various ways to customize **PhenoFlex** to better suit your needs. I am [Lars Caspersen](https://www.gartenbauwissenschaften.uni-bonn.de/en/staff/lars-caspersen), a a PhD student in the [HortiBonn group](https://www.gartenbauwissenschaften.uni-bonn.de/en) at the University of Bonn, Germany, where my research focuses on phenology modeling. 
 
-This website collects all the different modifications and custom versions of PhenoFlex that I created in the course of my PhD. I hope it can be usefull to make my learning experience accessible to a wider, and yet specialized, audience. If something is not working, if something remains unclear or you want to contact me for any other reason, please do not be shy. You can raise issues in the GitHub repository, that also hosts this website. You can also write me or my supervisor Eike Luedeling a mail, for more information check the left-hand side of the website.
+During my PhD, I primarily worked with **PhenoFlex** [@luedeling_phenoflex_2021], available through the **chillR** package [@luedeling_chillr_2023]. Along the way, I was asked to document my experiences,share what I learned, and what tools I created - so this website was born!
 
-**This collection of vignette does not serve as a general introduction to working with PhenoFlex.** For that, please check out this extremely helpfull [vignette on working with PhenoFlex](https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html) and the course book for the class on [Tree phenology analysis with R](https://inresgb-lehre.iaas.uni-bonn.de/chillR_book/introduction.html). Also, don't be shy to check out the [paper on PhenoFlex](https://www.sciencedirect.com/science/article/pii/S016819232100174X).
+To support collaboration and make my workflow more accessible, I bundles my custom functions into two R packages: 
 
-#### Acknowledgements
+- [LarsChill](https://github.com/larscaspersen/addition_chillR) - a collection of general-purpose functions that complement **chillR** (Yes, naming things is not my strongest skill 😅)
+- [evalpheno](https://github.com/larscaspersen/eval_phenoflex) - focused on functions to calculate bloom dates, especially helpful during PhenoFlex calibration. 
 
-I learned a lot on how to create a website like this from the learning lockbook of Jaqueline Wingen, who participated in the Tree Phenology Analysis with R course. Check out what an amazing website she has build: <https://jacqwng.github.io/Tree-phenology-analysis-with-R/index.html>
+These packages are currently available via GitHub only (not CRAN). Over time, some of their features may be integrated into our main package, [chillR](https://cran.r-project.org/web/packages/chillR/index.html).
+
+This site serves as a hub for all the tweaks, adaptations, and custom versions of **PhenoFlex** I developed through my PhD. I hope it proves useful for others working in this field — whether you're new to PhenoFlex or looking to explore it more deeply.
+
+If you run into any issues, have questions, or just want to connect, don't hesitate to reach  out! You can open an issue on t[GitHub](https://github.com/larscaspersen/vignette_custom_phenoflex) or email me (or my supervisor Eike Luedeling). Details are on the left-hand side of the page. 
+
+ ⚠️ **Note:** This collection of vignettes is *not* a  general introduction to PhenoFlex. For that, please check out:
+ 
+- The [official PhenoFlex vignette](https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html)
+- The course book: [Tree phenology analysis with R](https://inresgb-lehre.iaas.uni-bonn.de/chillR_book/introduction.html)
+- And, of course, the [PhenoFlex publication](https://www.sciencedirect.com/science/article/pii/S016819232100174X).
+
+---
+
+### 🙏 Acknowledgements
+
+I learned a lot about building websites like this from Jaqueline Wingen's learning logbook, created during the *Tree Phenology Analysis with R* course. Check out her amazing site: <https://jacqwng.github.io/Tree-phenology-analysis-with-R/index.html>
 
 ---
 
