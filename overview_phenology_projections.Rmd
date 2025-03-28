@@ -1,0 +1,8 @@
+---
+title: "Overview: Phenology Projections"
+output: distill::distill_article
+bibliography: vignette_phenoflex.bib
+csl: elsevier-harvard-modifed.csl
+---
+
+Once you have calibrated the model, the real fun begins. Here I want to share content on how to evaluate the model parameters, run projections etc.

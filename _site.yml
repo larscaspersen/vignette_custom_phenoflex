@@ -17,6 +17,8 @@ navbar:
         - text: "Implement another optimization algorithm"
           href: implement-meigo.html
     - text: "Phenology Projections"
+      href: overview_phenology_projections.html
     - text: "Plotting"
+      href: overview_plotting.html
 
 output: distill::distill_article
