@@ -2252,9 +2252,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --bkgd-color:       #01161E;
   }
 
+  .main-container {
+    max-width: 1200px; /* default is around 800px */
+  }
+
+  .distill-article .content {
+    max-width: 1200px;
+  }
+
+
   /*-- Additional custom styles --*/
   /* Add any additional CSS rules below                      */
-
 
   h1 {
     color: #335e51;
@@ -2320,6 +2328,61 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article li {
       margin-bottom: 0em;
   }
+
+  pre code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Inline code only */
+  d-article p > code {
+    background-color: #dcdcdc;
+    color: #333333;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  /* Full code chunk block */
+  div.sourceCode {
+    display: inline-block;
+    background-color: #2e2e2e;
+    padding: 1em;
+    border-radius: 6px;
+    margin: 1.5em 0;
+    max-width: 100%;         /* Prevents overflow */
+    white-space: nowrap;  
+  }
+
+  /* Code lines inside chunk */
+  div.sourceCode pre {
+    background-color: #dcdcdc; /* Let the container show */
+    color: #333333;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Code itself */
+  div.sourceCode code {
+    background-color: transparent; /* No inner background */
+    color: inherit;
+  }
+
+  d-article .r-output, 
+  d-arcticle .r-output-html, 
+  d-article .r-output-stdout, 
+  d-article pre.r-output {
+    background-color: blue;
+    color: pink;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: -10px;
+  }
+
+
+
 
   /*change buttons on homepage*/
   .btn-outline-dark {
@@ -2602,9 +2665,9 @@ Customized Model Calibration
 </button>
 <div class="nav-dropdown-content">
 <a href="overview_custom-model-calibration.html">Overview</a>
-<span class="nav-dropdown-header">Fixing Model Parameters</span>
+<a href="fixing-parameters-before-calibration.html">Fixing Model Parameters</a>
 <a href="intermediate-model-parameters.html">Intermediate Model Parameters</a>
-<a href="start.html">A Mess</a>
+<a href="implement-meigo.html">Implement another optimization algorithm</a>
 </div>
 </div>
 <span class="nav-dropdown-header">Phenology Projections</span>
@@ -2627,8 +2690,10 @@ Customized Model Calibration
 
 
 <div class="d-article">
-<p>Fixing model parameters to default values and excluding them from the model calibration is relatively easy in PhenoFlex. This is thanks to the modular structure of the <code>chillR::phenologyFitter()</code> function. Modifying the input for the <code>modelfn</code> argument does the trick. By default it is set to <code>PhenoFlex_GDHwrapper</code>. This is the name of a function in the chillR package. The help page of the <code>chillR::phenologyFitter()</code> function says, that the modelfn argument is a <em>“[…] Model function which computes the index in ‘temperatures’ at which blooming occures. It must have as first argument a data frame with at least the two columns ‘Temp’ and ‘JDays’ for one season, see ‘SeasonList’. It can have further arguments which can be passed via ‘…’. The ‘modelfn’ must return a single numeric value for the predicted bloom JDay for that season. ‘NA’ is an allowed return value if no blooming occures in that season. The default is the PhenoFlex with GDH as heat accumulation. Alternative is PhenoFlex_GAUSSwrapper with GAUSSian heat accumulation. But this function can also be user defined.”</em>
-In essence, the function needs to be able to calculate the bloom date for a data.frame with temperature data for one season (argument <code>x</code>) and for a paticular set of model parameters (argument <code>par</code>). Here is how the default function looks like:</p>
+<p>Fixing model parameters to default values—so that they are excluded from calibration—is relatively straightforward in PhenoFlex, thanks to the modular design of the <code>chillR::phenologyFitter()</code> function. The key is to modify the <code>modelfn</code> argument, which by default is set to <code>PhenoFlex_GDHwrapper</code>, a function included in the <strong>chillR</strong> package.</p>
+<p>According to the help page for <code>chillR::phenologyFitter()</code>, the <code>modelfn</code> must be a <em>“[…] model function which computes the index in ‘temperatures’ at which blooming occures. It must have as first argument a data frame with at least the two columns ‘Temp’ and ‘JDays’ for one season, see ‘SeasonList’. It can have further arguments which can be passed via ‘…’. The ‘modelfn’ must return a single numeric value for the predicted bloom JDay for that season. […]”</em></p>
+<p>In short, the model function must calculate the bloom date for a data.frame <code>x</code> (with seasonal temperature data), given a specific parameter set <code>par</code>.</p>
+<p>Here’s how the default wrapper function looks:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'>chillR</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/chillR/man/PhenoFlex_GDHwrapper.html'>PhenoFlex_GDHwrapper</a></span></span></code></pre>
@@ -2652,13 +2717,25 @@ In essence, the function needs to be able to calculate the bloom date for a data
         return(JDay)
     return(JDay + which(JDaylist == bloomindex)/n - 1/(n/ceiling(n/2)))
 }
-&lt;bytecode: 0x000001a5d14a2c50&gt;
+&lt;bytecode: 0x0000029fb326b3c8&gt;
 &lt;environment: namespace:chillR&gt;</code></pre>
 </div>
-<p>As you can see, the <code>PhenoFlex_GDHwrapper</code> wrapper is a relatively simple funciton. It takes <code>x</code> and <code>par</code> as inputs. <code>x</code> should be of the same format as tge output of the <code>chillR::genSeasonList()</code> function, it produces a list of data.frames, each data.frame has three columns: ‘Temp’, ‘JDay’ and ‘Year’. <code>par</code> is a numeric vector with twelve entries, containing the PhenoFlex model parameters. Pay attention, that the order of parameters is correct, otherwise the function may not work or produce funny results. The first par of the code ensures that temperatures of the heat submodel make sense, the base temperature <span class="math inline">\(T_b\)</span> must be lower than optimal temperature <span class="math inline">\(T_u\)</span> and secondly, <span class="math inline">\(T_u\)</span> should not be larger than the critical temperature <span class="math inline">\(T_c\)</span>. The next part of the code inserts the model parameters and the temperature data into PhenoFlex. PhenoFlex returns the bloomindex, this is not the bloom date but indicates at which row of the temperature data.frame <code>x</code> the accumulated heat exceeds the heat requirement <span class="math inline">\(z_c\)</span>. The last part of the code calculates the bloom date, it has a routine what to do when the accumulated heat never exceeds <span class="math inline">\(z_c\)</span> (it returns an <code>NA</code> to the <code>phenologyFitter()</code> function) or it calculates the Julian Day (with digits). The bloom date calculation looks at first glance a bit complicated, but it accounts for the hour when the requirement is met. When it is met at noon at 12:00, it returns the Julian Day without alteration. If it is earlier, it subtracts a fraction and if it is later than noon it adds a fraction.</p>
-<h2 id="customizing-the-wrapper-function">Customizing the wrapper function</h2>
-<p>The requirements on the wrapper function supplied in <code>modelfn</code> are relatively loose. It was never specified, for example, how many parameters need to be supplied and in which order. When we want to exclude some model parameters from calibration, maybe because we noted that they contribute relatively little to the model performance, then we can adjust how we insert the model parameters of <code>par</code> in the <code>chillR::PhenoFlex()</code> function.</p>
-<p>Here is an example with <span class="math inline">\(T_c\)</span> fixed at 36°C. Now par should have only 11 entries, because we fixed Tc. Pay attention, that you incert the fixed parameters at the right position or correct the indices in the later code, so that the parameters are assigned correctly in the PhenoFlex function call. You can of course fix more model parameters, if you want to. Also, make sure that you remove the fixed parameter from <code>par.guess</code> and the search ranges when running the <code>phenologyFitter()</code> function.</p>
+<p>The function is relatively simple. It accepts:</p>
+<ul>
+<li><code>x</code>: a single-season data.frame (like those from <code>chillR::genSeasonList()</code>), with columns ‘Temp’, ‘JDay’ and ‘Year’.</li>
+<li><code>par</code>: a numeric vector of 12 parameters corresponding to the PhenoFlex model.</li>
+</ul>
+<p>It is important to maintain the correct order of parameters—if they are misaligned, function may produce incorrect results or fail altogether.</p>
+<p>The function performs three main tasks:</p>
+<ol type="1">
+<li><strong>Input checks:</strong> It ensures that temperature parameters are valid (e.g. base temperature <span class="math inline">\(T_b\)</span> is lower than the optimal temperature <span class="math inline">\(T_u\)</span>, and <span class="math inline">\(T_u\)</span> is less than the critical temperature <span class="math inline">\(T_c\)</span>).</li>
+<li><strong>Model execution:</strong> It runs the PhenoFlex model and retrieves the <em>bloomindex</em> (the row number where accumulated heat exceeds the requirement <span class="math inline">\(z_c\)</span>).
+3.<strong>Bloom date computation:</strong> Converts the <em>bloomindex</em> into a Julian Day, factoring the hour of blooming to provide a more precise results. If the requirement is met at noon, the Julian Day is returned unchanged; otherwise, a fractional adjustment is applied.</li>
+</ol>
+<h2 id="customizing-wrapper-function">Customizing Wrapper Function</h2>
+<p>The requirements for a <code>modelfn</code> wrapper a fairly loose —there’s no strict enforcement of how many parameters it must accept or in what order.</p>
+<p>This flexibility allows us to <strong>exclude certain parameter from calibration</strong>, which can be useful when a parameter has limited influence on model performance or is already well understood. All we need to do is <strong>manually fix its value inside the wrapper function</strong>, and ensure it’s excluded from <code>par.guess</code>, <code>lower</code> and <code>upper</code> when calling <code>chillR::phenologyFitter()</code>.</p>
+<p>Here’s an example where we fix <span class="math inline">\(T_c\)</span> (critical temperature) at 36°C. Since it is no longer estimated, <code>par</code> will contain only 11 parameters:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>PhenoFlex_GDHwrapper_fixed</span> <span class='op'>&lt;-</span> <span class='kw'>function</span> <span class='op'>(</span><span class='va'>x</span>, <span class='va'>par</span>, <span class='va'>Tc</span> <span class='op'>=</span> <span class='fl'>36</span><span class='op'>)</span> </span>
@@ -2668,10 +2745,16 @@ In essence, the function needs to be able to calculate the bloom date for a data
 <span>        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='cn'>NA</span><span class='op'>)</span></span>
 <span>    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>par</span><span class='op'>[</span><span class='fl'>10</span><span class='op'>]</span> <span class='op'>&lt;=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span><span class='op'>)</span> </span>
 <span>        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='cn'>NA</span><span class='op'>)</span></span>
-<span>    <span class='va'>bloomindex</span> <span class='op'>&lt;-</span> <span class='fu'>PhenoFlex</span><span class='op'>(</span>temp <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>Temp</span>, times <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>Temp</span><span class='op'>)</span>, </span>
-<span>        yc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, zc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>, s1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span>, Tu <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>, E0 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>5</span><span class='op'>]</span>, </span>
-<span>        E1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>6</span><span class='op'>]</span>, A0 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>7</span><span class='op'>]</span>, A1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>8</span><span class='op'>]</span>, Tf <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>9</span><span class='op'>]</span>, Tc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>10</span><span class='op'>]</span>, </span>
-<span>        Tb <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>11</span><span class='op'>]</span>, slope <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>12</span><span class='op'>]</span>, Imodel <span class='op'>=</span> <span class='fl'>0L</span>, basic_output <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>$</span><span class='va'>bloomindex</span></span>
+<span>    <span class='va'>bloomindex</span> <span class='op'>&lt;-</span> <span class='fu'>PhenoFlex</span><span class='op'>(</span>temp <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>Temp</span>, </span>
+<span>                            times <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>Temp</span><span class='op'>)</span>, </span>
+<span>                            yc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, zc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>, </span>
+<span>                            s1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span>, Tu <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>, </span>
+<span>                            E0 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>5</span><span class='op'>]</span>, E1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>6</span><span class='op'>]</span>, </span>
+<span>                            A0 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>7</span><span class='op'>]</span>, A1 <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>8</span><span class='op'>]</span>, </span>
+<span>                            Tf <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>9</span><span class='op'>]</span>, Tc <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>10</span><span class='op'>]</span>, </span>
+<span>                            Tb <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>11</span><span class='op'>]</span>, slope <span class='op'>=</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>12</span><span class='op'>]</span>, </span>
+<span>                            Imodel <span class='op'>=</span> <span class='fl'>0L</span>, </span>
+<span>                            basic_output <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>$</span><span class='va'>bloomindex</span></span>
 <span>    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>bloomindex</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> </span>
 <span>        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='cn'>NA</span><span class='op'>)</span></span>
 <span>    <span class='va'>JDay</span> <span class='op'>&lt;-</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>JDay</span><span class='op'>[</span><span class='va'>bloomindex</span><span class='op'>]</span></span>
@@ -2679,51 +2762,75 @@ In essence, the function needs to be able to calculate the bloom date for a data
 <span>    <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>JDaylist</span><span class='op'>)</span></span>
 <span>    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>n</span> <span class='op'>==</span> <span class='fl'>1</span><span class='op'>)</span> </span>
 <span>        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>JDay</span><span class='op'>)</span></span>
-<span>    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>JDay</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>JDaylist</span> <span class='op'>==</span> <span class='va'>bloomindex</span><span class='op'>)</span><span class='op'>/</span><span class='va'>n</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='va'>n</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span>    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>JDay</span> <span class='op'>+</span> </span>
+<span>             <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>JDaylist</span> <span class='op'>==</span> <span class='va'>bloomindex</span><span class='op'>)</span><span class='op'>/</span><span class='va'>n</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='va'>n</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
 <span><span class='op'>}</span></span></code></pre>
 </div>
 </div>
-<p>We have adjusted the wrapper function! And now what? Next time we want to calibrate the model with <span class="math inline">\(T_c\)</span> fixed at 36°C (or any other value), we can use <code>PhenoFlex_GDHwrapper_fixed</code> as an argument for <code>modelfn</code> when running the <code>chillR::phenologyFitter()</code> function. Just make sure that you remove <span class="math inline">\(T_c\)</span> from the <code>par.guess</code>, <code>lower</code> and <code>upper</code> argument, when running the function. Here is an example code from the help page of the <code>chillR::phenologyFitter()</code> function, that I modified to keep <span class="math inline">\(T_c\)</span> fixed at 36°C.</p>
+<h2 id="using-the-custom-wrapper">Using the Custom Wrapper</h2>
+<p>Once your wrapper is defined, you can pass it to <code>chillR::phenologyFitter()</code> via <code>modelfn</code> argument. Be sure to:</p>
+<ul>
+<li><strong>Exclude</strong> the fixed parameter <span class="math inline">\(T_c\)</span> from <code>par.guess</code>, <code>lower</code> and <code>upper</code></li>
+<li><strong>Adjust the parameter indices</strong> in the wrapper function</li>
+<li><strong>Use the modified wrapper</strong> in the fitter function call</li>
+</ul>
+<p>Here is an adapted example from the <code>chillR::phenologyFitter()</code> help page:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>KA_weather</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>KA_bloom</span><span class='op'>)</span></span>
-<span><span class='va'>hourtemps</span> <span class='op'>&lt;-</span> <span class='fu'>stack_hourly_temps</span><span class='op'>(</span><span class='va'>KA_weather</span>, latitude<span class='op'>=</span><span class='fl'>50.4</span><span class='op'>)</span></span>
-<span><span class='va'>SeasonList</span> <span class='op'>&lt;-</span> <span class='fu'>genSeasonList</span><span class='op'>(</span><span class='va'>hourtemps</span><span class='op'>$</span><span class='va'>hourtemps</span>, years<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2007</span>,<span class='fl'>2008</span><span class='op'>)</span><span class='op'>)</span></span>
+<span><span class='va'>hourtemps</span> <span class='op'>&lt;-</span> <span class='fu'>stack_hourly_temps</span><span class='op'>(</span><span class='va'>KA_weather</span>, </span>
+<span>                                latitude<span class='op'>=</span><span class='fl'>50.4</span><span class='op'>)</span></span>
+<span><span class='va'>SeasonList</span> <span class='op'>&lt;-</span> <span class='fu'>genSeasonList</span><span class='op'>(</span><span class='va'>hourtemps</span><span class='op'>$</span><span class='va'>hourtemps</span>, </span>
+<span>                            years<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2007</span>,<span class='fl'>2008</span><span class='op'>)</span><span class='op'>)</span></span>
 <span><span class='co'>#remove Tc from par.guess, upper and lower</span></span>
 <span><span class='co'>#--&gt; only 11 parameters to estimate</span></span>
-<span><span class='co'>#       yc    zc   s1  Tu  E0      E1      A0      A1           Tf Tb slop  </span></span>
-<span><span class='va'>par</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>40</span>, <span class='fl'>190</span>, <span class='fl'>0.5</span>, <span class='fl'>25</span>, <span class='fl'>3372.8</span>, <span class='fl'>9900.3</span>, <span class='fl'>6319.5</span>, <span class='fl'>5.939917e13</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>1.6</span><span class='op'>)</span></span>
-<span><span class='va'>upper</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>41</span>, <span class='fl'>200</span>, <span class='fl'>1</span>, <span class='fl'>30</span>, <span class='fl'>4000</span>, <span class='fl'>10000</span>, <span class='fl'>7000</span>, <span class='fl'>6.e13</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>50</span><span class='op'>)</span></span>
-<span><span class='va'>lower</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>38</span>, <span class='fl'>180</span>, <span class='fl'>0.1</span>, <span class='fl'>0</span>, <span class='fl'>3000</span>, <span class='fl'>9000</span>, <span class='fl'>6000</span>, <span class='fl'>5.e13</span>, <span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>0.05</span><span class='op'>)</span></span>
-<span><span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'>phenologyFitter</span><span class='op'>(</span>par.guess<span class='op'>=</span><span class='va'>par</span>, bloomJDays<span class='op'>=</span><span class='va'>KA_bloom</span><span class='op'>$</span><span class='va'>pheno</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>24</span>,<span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span>, </span>
+<span><span class='co'>#order: yc, zc, s1, Tu, E0, E1, A0, A1, Tf, Tb, slope   </span></span>
+<span><span class='va'>par</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>40</span>, <span class='fl'>190</span>, <span class='fl'>0.5</span>, <span class='fl'>25</span>, <span class='fl'>3372.8</span>, <span class='fl'>9900.3</span>, <span class='fl'>6319.5</span>, </span>
+<span>         <span class='fl'>5.939917e13</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>1.6</span><span class='op'>)</span></span>
+<span><span class='va'>upper</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>41</span>, <span class='fl'>200</span>, <span class='fl'>1</span>, <span class='fl'>30</span>, <span class='fl'>4000</span>, <span class='fl'>10000</span>, </span>
+<span>           <span class='fl'>7000</span>, <span class='fl'>6.e13</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>50</span><span class='op'>)</span></span>
+<span><span class='va'>lower</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>38</span>, <span class='fl'>180</span>, <span class='fl'>0.1</span>, <span class='fl'>0</span>, <span class='fl'>3000</span>, <span class='fl'>9000</span>, </span>
+<span>           <span class='fl'>6000</span>, <span class='fl'>5.e13</span>, <span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>0.05</span><span class='op'>)</span></span>
+<span><span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'>phenologyFitter</span><span class='op'>(</span>par.guess<span class='op'>=</span><span class='va'>par</span>, </span>
+<span>                     bloomJDays<span class='op'>=</span><span class='va'>KA_bloom</span><span class='op'>$</span><span class='va'>pheno</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>24</span>,<span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span>, </span>
 <span>  SeasonList<span class='op'>=</span><span class='va'>SeasonList</span>, lower<span class='op'>=</span><span class='va'>lower</span>, upper<span class='op'>=</span><span class='va'>upper</span>,</span>
-<span>  control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>smooth<span class='op'>=</span><span class='cn'>FALSE</span>, verbose<span class='op'>=</span><span class='cn'>TRUE</span>, maxit<span class='op'>=</span><span class='fl'>10</span>, nb.stop.improvement<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span></span>
+<span>  control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>smooth<span class='op'>=</span><span class='cn'>FALSE</span>, verbose<span class='op'>=</span><span class='cn'>TRUE</span>, maxit<span class='op'>=</span><span class='fl'>10</span>, </span>
+<span>               nb.stop.improvement<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
-<p>It is quite convenient, that we choose to have the fixed parameter as an additional model argument. If we later change our mind and want to keep <span class="math inline">\(T_c\)</span> fixed at 30°C instead of the default 36°C, we only need to add that information in the function call of the <code>chillR::phenologyFitter()</code>. If we forgot to specify the default value as an argument of the function, we would be forced to either change the code specifying the <code>modelfn</code> function or create an alternative version. Quite messy. But because we kept Tc as a function argument, with a default value of 36, we can pass different values for <span class="math inline">\(T_c\)</span> via the <code>chillR::phenologyFitter()</code> function. We can do that, thanks to the magic of the <code>...</code> argument of the <code>chillR::phenologyFitter()</code>. As far as I understand it, the <code>...</code> argument takes any named or unnamed additional argument, that is not specified when the function is defined. And the fitter function is coded in a way, that all these additional arguments are passed on to the <code>modelfn</code> function. Just make sure that you name the argument correctly, so that the function can assign it to the function specified in <code>modelfn</code>.</p>
+<h2 id="bonus-override-the-default-value-via-...">Bonus: Override the Default Value via <code>...</code></h2>
+<p>The best part about adding <span class="math inline">\(T_c\)</span> as an <strong>optional argument</strong> to your wrapper is that you can override its value directly when calling <code>chillR::phenologyFitter()</code>—without rewriting the wrapper.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>KA_weather</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>KA_bloom</span><span class='op'>)</span></span>
-<span><span class='va'>hourtemps</span> <span class='op'>&lt;-</span> <span class='fu'>stack_hourly_temps</span><span class='op'>(</span><span class='va'>KA_weather</span>, latitude<span class='op'>=</span><span class='fl'>50.4</span><span class='op'>)</span></span>
-<span><span class='va'>SeasonList</span> <span class='op'>&lt;-</span> <span class='fu'>genSeasonList</span><span class='op'>(</span><span class='va'>hourtemps</span><span class='op'>$</span><span class='va'>hourtemps</span>, years<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2007</span>,<span class='fl'>2008</span><span class='op'>)</span><span class='op'>)</span></span>
+<span><span class='va'>hourtemps</span> <span class='op'>&lt;-</span> <span class='fu'>stack_hourly_temps</span><span class='op'>(</span><span class='va'>KA_weather</span>, </span>
+<span>                                latitude<span class='op'>=</span><span class='fl'>50.4</span><span class='op'>)</span></span>
+<span><span class='va'>SeasonList</span> <span class='op'>&lt;-</span> <span class='fu'>genSeasonList</span><span class='op'>(</span><span class='va'>hourtemps</span><span class='op'>$</span><span class='va'>hourtemps</span>, </span>
+<span>                            years<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2007</span>,<span class='fl'>2008</span><span class='op'>)</span><span class='op'>)</span></span>
 <span><span class='co'>#remove Tc from par.guess, upper and lower</span></span>
 <span><span class='co'>#--&gt; only 11 parameters to estimate</span></span>
-<span><span class='co'>#       yc    zc   s1  Tu  E0      E1      A0      A1           Tf Tb slop  </span></span>
-<span><span class='va'>par</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>40</span>, <span class='fl'>190</span>, <span class='fl'>0.5</span>, <span class='fl'>25</span>, <span class='fl'>3372.8</span>, <span class='fl'>9900.3</span>, <span class='fl'>6319.5</span>, <span class='fl'>5.939917e13</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>1.6</span><span class='op'>)</span></span>
-<span><span class='va'>upper</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>41</span>, <span class='fl'>200</span>, <span class='fl'>1</span>, <span class='fl'>30</span>, <span class='fl'>4000</span>, <span class='fl'>10000</span>, <span class='fl'>7000</span>, <span class='fl'>6.e13</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>50</span><span class='op'>)</span></span>
-<span><span class='va'>lower</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>38</span>, <span class='fl'>180</span>, <span class='fl'>0.1</span>, <span class='fl'>0</span>, <span class='fl'>3000</span>, <span class='fl'>9000</span>, <span class='fl'>6000</span>, <span class='fl'>5.e13</span>, <span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>0.05</span><span class='op'>)</span></span>
-<span><span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'>phenologyFitter</span><span class='op'>(</span>par.guess<span class='op'>=</span><span class='va'>par</span>, bloomJDays<span class='op'>=</span><span class='va'>KA_bloom</span><span class='op'>$</span><span class='va'>pheno</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>24</span>,<span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span>, </span>
+<span><span class='co'>#order: yc, zc, s1, Tu, E0, E1, A0, A1, Tf, Tb, slope  </span></span>
+<span><span class='va'>par</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>40</span>, <span class='fl'>190</span>, <span class='fl'>0.5</span>, <span class='fl'>25</span>, <span class='fl'>3372.8</span>, <span class='fl'>9900.3</span>, </span>
+<span>         <span class='fl'>6319.5</span>, <span class='fl'>5.939917e13</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>1.6</span><span class='op'>)</span></span>
+<span><span class='va'>upper</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>41</span>, <span class='fl'>200</span>, <span class='fl'>1</span>, <span class='fl'>30</span>, <span class='fl'>4000</span>, <span class='fl'>10000</span>, </span>
+<span>           <span class='fl'>7000</span>, <span class='fl'>6.e13</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>50</span><span class='op'>)</span></span>
+<span><span class='va'>lower</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>38</span>, <span class='fl'>180</span>, <span class='fl'>0.1</span>, <span class='fl'>0</span>, <span class='fl'>3000</span>, <span class='fl'>9000</span>,</span>
+<span>           <span class='fl'>6000</span>, <span class='fl'>5.e13</span>, <span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>0.05</span><span class='op'>)</span></span>
+<span><span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'>phenologyFitter</span><span class='op'>(</span>par.guess<span class='op'>=</span><span class='va'>par</span>, </span>
+<span>                     bloomJDays<span class='op'>=</span><span class='va'>KA_bloom</span><span class='op'>$</span><span class='va'>pheno</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>24</span>,<span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span>, </span>
 <span>  SeasonList<span class='op'>=</span><span class='va'>SeasonList</span>, lower<span class='op'>=</span><span class='va'>lower</span>, upper<span class='op'>=</span><span class='va'>upper</span>,</span>
 <span>  Tc <span class='op'>=</span> <span class='fl'>30</span>,</span>
-<span>  control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>smooth<span class='op'>=</span><span class='cn'>FALSE</span>, verbose<span class='op'>=</span><span class='cn'>TRUE</span>, maxit<span class='op'>=</span><span class='fl'>10</span>, nb.stop.improvement<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span></span>
+<span>  control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>smooth<span class='op'>=</span><span class='cn'>FALSE</span>, verbose<span class='op'>=</span><span class='cn'>TRUE</span>, maxit<span class='op'>=</span><span class='fl'>10</span>, </span>
+<span>               nb.stop.improvement<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
+<p>This way, if you later want to fix <span class="math inline">\(T_c\)</span> at a different value, you don’t need to edit the wrapper—just pass a new value via <code>$T_c=...$</code> in the function call. Much cleaner!</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
