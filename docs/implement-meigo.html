@@ -2280,9 +2280,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --bkgd-color:       #01161E;
   }
 
+  .main-container {
+    max-width: 1200px; /* default is around 800px */
+  }
+
+  .distill-article .content {
+    max-width: 1200px;
+  }
+
+
   /*-- Additional custom styles --*/
   /* Add any additional CSS rules below                      */
-
 
   h1 {
     color: #335e51;
@@ -2348,6 +2356,61 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article li {
       margin-bottom: 0em;
   }
+
+  pre code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Inline code only */
+  d-article p > code {
+    background-color: #dcdcdc;
+    color: #333333;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  /* Full code chunk block */
+  div.sourceCode {
+    display: inline-block;
+    background-color: #2e2e2e;
+    padding: 1em;
+    border-radius: 6px;
+    margin: 1.5em 0;
+    max-width: 100%;         /* Prevents overflow */
+    white-space: nowrap;  
+  }
+
+  /* Code lines inside chunk */
+  div.sourceCode pre {
+    background-color: #dcdcdc; /* Let the container show */
+    color: #333333;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Code itself */
+  div.sourceCode code {
+    background-color: transparent; /* No inner background */
+    color: inherit;
+  }
+
+  d-article .r-output, 
+  d-arcticle .r-output-html, 
+  d-article .r-output-stdout, 
+  d-article pre.r-output {
+    background-color: blue;
+    color: pink;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: -10px;
+  }
+
+
+
 
   /*change buttons on homepage*/
   .btn-outline-dark {
@@ -2632,11 +2695,11 @@ Customized Model Calibration
 <a href="overview_custom-model-calibration.html">Overview</a>
 <a href="fixing-parameters-before-calibration.html">Fixing Model Parameters</a>
 <a href="intermediate-model-parameters.html">Intermediate Model Parameters</a>
-<a href="start.html">A Mess</a>
+<a href="implement-meigo.html">Implement another optimization algorithm</a>
 </div>
 </div>
-<span class="nav-dropdown-header">Phenology Projections</span>
-<span class="nav-dropdown-header">Plotting</span>
+<a href="overview_phenology_projections.html">Phenology Projections</a>
+<a href="overview_plotting.html">Plotting</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
 </nav>
@@ -2689,7 +2752,7 @@ bundle all the different cusotm evaluaiton functions and wrapper functions in a 
     g[5] &lt;- exp((10 * x[6])/(297 * 279))
     return(list(F = F, g = g))
 }
-&lt;bytecode: 0x000002c2c4174300&gt;
+&lt;bytecode: 0x000001338437b2b0&gt;
 &lt;environment: namespace:evalpheno&gt;</code></pre>
 </div>
 <p>As you can see, the evaluation functions is actually quite simple. At first we predict bloom dates, using the entries of <code>SeasonList</code>, t the function to calculate bloom dates specified in <code>modelfn</code> and the parameters specified in <code>x</code>(in the vignette for the MEIGOR package they always called the vector of the parameter <code>x</code>, while in PhenoFlex it is the name for the temperature data. Because I was not sure if the naming affected something, I followed the naming convention of the vignette, though it might be confusing.).</p>
@@ -2732,8 +2795,9 @@ bundle all the different cusotm evaluaiton functions and wrapper functions in a 
 </div>
 </div>
 <p>The first part is about the search space of the model parameters. I decided to optimize based on the intermediate model parameters and to fix two of the model parameters (<span class="math inline">\(\theta^{*} = 279\)</span>, <span class="math inline">\(T_c=36\)</span>). <code>x_0</code> is the initial guess, <code>x_L</code> the lower search range and <code>x_U</code> the upper range. The upper acceptable limit of the inequality constrain is specified in <code>c_U</code> and the lower limit in <code>c_L</code>. In the first three constrains for the heat submodel temperature parameters, we excluded any negative value, in the last two relating to the <span class="math inline">\(Q_{10}\)</span> metric, we excluded values outside the range of 1.5 to 3.5. All of that information is bundled in a list called <code>problem</code>. There it is also specified which <strong>evaluation function</strong> we are using, here I use the function <code>evalpheno::eval_phenoflex_single_twofixed</code>. Make sure that you omit the paranthesis after function name, because you want to only specify the name and not exexcute the function. The problem-list gets followed by the option list, here you specify settings of the optimization algorithm. <code>maxtime</code> specifies the time-limit for how long the algortihm should optimize (in seconds). <code>local_solver</code> specifies which optimization algorithm should be run when ESS found a set of model parameter leading to a lower RSS. The local solver makes a more refined narrower search around the newly found, better model parameters. <code>local_bestx</code> specifies how often the local search is called. When set to 1, local search is only triggered immediately after a better set is found, higher values would postpone the local search for some further iterations, that can be beneficial when the global search quickly finds even better parameter sets. You can also specifiy how many iterations the algorithms should make with <code>maxeval</code>. For more options, check the MEIGOR vignette.</p>
-<p>Lastly, the problem and option list get supplied to the <code>LarsChill::custom_essr()</code> funciton. This function does the optimization and should hopefully return good model parameters for your dataset. As you may have noticed, I also supplied three further arguments to the function: <code>modelfn</code>, <code>bloomJDays</code> and <code>SeasonList</code>. These are inputs for the evaluation function specified in the problem list. They are the same when running the <code>phenologyFitter()</code> function.</p>
+<p>Lastly, the problem and option list get supplied to the <code>LarsChill::custom_essr()</code> function. This function does the optimization and should hopefully return good model parameters for your dataset. As you may have noticed, I also supplied three further arguments to the function: <code>modelfn</code>, <code>bloomJDays</code> and <code>SeasonList</code>. These are inputs for the evaluation function specified in the problem list. They are the same when running the <code>phenologyFitter()</code> function.</p>
 <h2 id="the-ouput">The ouput</h2>
+<p>The out of the <code>LarsChill::custom_essr()</code> looks a bit different than the output of the <code>chillR::phenologyFitter()</code> function. The output is a list with several elements. Most importantly, you can find the optimized model parameters under the name <code>xbest</code>. Other interesting outputs include the intermediate set of model parameters that were at the time the best before an even better set was found by the algorithm. You can also check <code>f</code> and <code>fbest</code> for the development of the residual sum of squares (RSS) and the final RSS result.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-caspersen_contrasting_2025" class="csl-entry" role="listitem">

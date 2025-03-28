@@ -2283,9 +2283,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --bkgd-color:       #01161E;
   }
 
+  .main-container {
+    max-width: 1200px; /* default is around 800px */
+  }
+
+  .distill-article .content {
+    max-width: 1200px;
+  }
+
+
   /*-- Additional custom styles --*/
   /* Add any additional CSS rules below                      */
-
 
   h1 {
     color: #335e51;
@@ -2321,7 +2329,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   /*change url color */
   a {
-    color: #335e51;
+    color: #5aa58e;
   }
 
   a:hover {
@@ -2351,6 +2359,61 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article li {
       margin-bottom: 0em;
   }
+
+  pre code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Inline code only */
+  d-article p > code {
+    background-color: #dcdcdc;
+    color: #333333;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  /* Full code chunk block */
+  div.sourceCode {
+    display: inline-block;
+    background-color: #2e2e2e;
+    padding: 1em;
+    border-radius: 6px;
+    margin: 1.5em 0;
+    max-width: 100%;         /* Prevents overflow */
+    white-space: nowrap;  
+  }
+
+  /* Code lines inside chunk */
+  div.sourceCode pre {
+    background-color: #dcdcdc; /* Let the container show */
+    color: #333333;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Code itself */
+  div.sourceCode code {
+    background-color: transparent; /* No inner background */
+    color: inherit;
+  }
+
+  d-article .r-output, 
+  d-arcticle .r-output-html, 
+  d-article .r-output-stdout, 
+  d-article pre.r-output {
+    background-color: blue;
+    color: pink;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: -10px;
+  }
+
+
+
 
   /*change buttons on homepage*/
   .btn-outline-dark {
@@ -2633,11 +2696,13 @@ Customized Model Calibration
 </button>
 <div class="nav-dropdown-content">
 <a href="overview_custom-model-calibration.html">Overview</a>
-<a href="start.html">A Mess</a>
+<a href="fixing-parameters-before-calibration.html">Fixing Model Parameters</a>
+<a href="intermediate-model-parameters.html">Intermediate Model Parameters</a>
+<a href="implement-meigo.html">Implement another optimization algorithm</a>
 </div>
 </div>
-<span class="nav-dropdown-header">Phenology Projections</span>
-<span class="nav-dropdown-header">Plotting</span>
+<a href="overview_phenology_projections.html">Phenology Projections</a>
+<a href="overview_plotting.html">Plotting</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
 </nav>
@@ -2657,8 +2722,8 @@ Customized Model Calibration
 
 <div class="d-article">
 <h2 id="motivation">Motivation</h2>
-<p>PhenoFlex is a phenology model <span class="citation" data-cites="luedeling_phenoflex_2021">(<a href="#ref-luedeling_phenoflex_2021" role="doc-biblioref">Luedeling et al., 2021</a>)</span>, accessible via the <code>chillR</code> package <span class="citation" data-cites="luedeling_chillr_2023">(<a href="#ref-luedeling_chillr_2023" role="doc-biblioref">Luedeling et al., 2023</a>)</span>. During my PhD I mainly worked with PhenoFlex and worked out custimized functions. These functions made it easier for me to work with PhenoFlex, for example to integrate different calibration methods, calibration algortihms or to fit several phenological stages in one go.</p>
-<p>The standard PhenoFlex routines, from running the model, calibrating it, cross-validation and plotting the outputs of the chill and heat accumulation submodels is already nicely documented by <span class="citation" data-cites="urbach_phenoflex_2021">Urbach et al. (<a href="#ref-urbach_phenoflex_2021" role="doc-biblioref">2021</a>)</span>, see <a href="https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html" class="uri">https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html</a>. These routines were the blueprint for the first phenology studies using PhenoFlex <span class="citation" data-cites="luedeling_phenoflex_2021 fernandez_unusually_2022">(<a href="#ref-fernandez_unusually_2022" role="doc-biblioref">Fernandez et al., 2022</a>; <a href="#ref-luedeling_phenoflex_2021" role="doc-biblioref">Luedeling et al., 2021</a>)</span>.</p>
+<p>PhenoFlex is a phenology model developed by <span class="citation" data-cites="luedeling_phenoflex_2021">Luedeling et al. (<a href="#ref-luedeling_phenoflex_2021" role="doc-biblioref">2021</a>)</span>, accessible via the chillR package <span class="citation" data-cites="luedeling_chillr_2023">(<a href="#ref-luedeling_chillr_2023" role="doc-biblioref">Luedeling et al., 2023</a>)</span>. During my PhD, I primarily worked with PhenoFlex, developing customized functions to improve its usability. These functions helped streamline tasks such as integrating various calibration methods, algorithms, and fitting multiple phenological stages simultaneously.</p>
+<p>The standard PhenoFlex routines, including model runs, calibration, cross-validation, and plotting outputs for the chill and heat accumulation submodels, are well-documented by <span class="citation" data-cites="urbach_phenoflex_2021">Urbach et al. (<a href="#ref-urbach_phenoflex_2021" role="doc-biblioref">2021</a>)</span>. For further details, see the the <a href="https://cran.r-project.org/web/packages/chillR/vignettes/PhenoFlex.html">PhenoFlex vignette</a>. These routines formed the foundation for early phenology studies using PhenoFlex <span class="citation" data-cites="luedeling_phenoflex_2021 fernandez_unusually_2022">(<a href="#ref-fernandez_unusually_2022" role="doc-biblioref">Fernandez et al., 2022</a>; <a href="#ref-luedeling_phenoflex_2021" role="doc-biblioref">Luedeling et al., 2021</a>)</span>.</p>
 <p>In these studies, many iterations of model calibration were carried out. That means you run the calibration fitting function <code>chillR::PhenologyFitter()</code>, wait and check if the estimated model parameters provide better predictions, if yes, then you start another round of calibration, using the estimated parameters as a new starting point. If they did not improve the predictions, you may want to change the search space, either make them wider or narrower to help the optimization algorithm to find new sets of parameters. 15 to 30 rounds of iterations were used to find the final set of parameters. This workflow resulted in fairly good parameters, the validation RMSE was below 4 days in these studies, however, it is a lot of work and takes quite a while. And most importantly, it is difficult to scale up the process, because it involves a lot of manual checking, adjusting search ranges, checking temperature response plots.</p>
 <p>One of my first tasks as a PhD was to apply PhenoFlex to an extensive phenology dataset assembled in the Adapting Mediterranean Orchards (AdaMedOr) project <span class="citation" data-cites="luedeling_long-term_2024">(<a href="#ref-luedeling_long-term_2024" role="doc-biblioref">Luedeling et al., 2024</a>)</span>. The dataset comprised 270 cultivars of seven temperate fruit tree species (almond, pistachio, apple, pear, plum, sweet cherry, apricot). More than 100 cultivars had 20 or more observations <span class="citation" data-cites="caspersen_contrasting_2025">(<a href="#ref-caspersen_contrasting_2025" role="doc-biblioref">Caspersen et al., 2025</a>)</span>, which is deemed to be the critical number of observations for model calibration <span class="citation" data-cites="urbach_phenoflex_2021">(<a href="#ref-urbach_phenoflex_2021" role="doc-biblioref">Urbach et al., 2021</a>)</span>. For most of the cultivars we had 20 observations, so after a 75% calibration - 25% validation split only 5 observations are in the validation data set. Validating the model only on 5 observations seems quite a stretch, so we wanted to cross-validate the calibrated the model, so we had to even do more calibration steps.</p>
 <h2 id="theoretical-background">Theoretical Background</h2>
@@ -2715,7 +2780,7 @@ A_0=A_1e^{(\frac{E_0-E_1}{\theta_c})}\\
         return(JDay)
     return(JDay + which(JDaylist == bloomindex)/n - 1/(n/ceiling(n/2)))
 }
-&lt;bytecode: 0x0000014e96739d10&gt;
+&lt;bytecode: 0x0000018d2eb2c9e8&gt;
 &lt;environment: namespace:chillR&gt;</code></pre>
 </div>
 <p>As you can see, the <code>PhenoFlex_GDHwrapper</code> wrapper is a relatively simple funciton. It takes <code>x</code> and <code>par</code> as inputs. <code>x</code> should be of the same format as tge output of the <code>chillR::genSeasonList()</code> function, it produces a list of data.frames, each data.frame has three columns: ‘Temp’, ‘JDay’ and ‘Year’. <code>par</code> is a numeric vector with twelve entries, containing the PhenoFlex model parameters. Pay attention, that the order of parameters is correct, otherwise the function may not work or produce funny results. The first par of the code ensures that temperatures of the heat submodel make sense, the base temperature <span class="math inline">\(T_b\)</span> must be lower than optimal temperature <span class="math inline">\(T_u\)</span> and secondly, <span class="math inline">\(T_u\)</span> should not be larger than the critical temperature <span class="math inline">\(T_c\)</span>. The next part of the code inserts the model parameters and the temperature data into PhenoFlex. PhenoFlex returns the bloomindex, this is not the bloom date but indicates at which row of the temperature data.frame <code>x</code> the accumulated heat exceeds the heat requirement <span class="math inline">\(z_c\)</span>. The last part of the code calculates the bloom date, it has a routine what to do when the accumulated heat never exceeds <span class="math inline">\(z_c\)</span> (it returns an <code>NA</code> to the <code>phenologyFitter()</code> function) or it calculates the Julian Day (with digits). The bloom date calculation looks at first glance a bit complicated, but it accounts for the hour when the requirement is met. When it is met at noon at 12:00, it returns the Julian Day without alteration. If it is earlier, it subtracts a fraction and if it is later than noon it adds a fraction.</p>
