@@ -27,7 +27,7 @@ site: distill::distill_website
 
 This website compiles various ways to customize **PhenoFlex** to better suit your needs. I am [Lars Caspersen](https://www.gartenbauwissenschaften.uni-bonn.de/en/staff/lars-caspersen), a a PhD student in the [HortiBonn group](https://www.gartenbauwissenschaften.uni-bonn.de/en) at the University of Bonn, Germany, where my research focuses on phenology modeling. 
 
-During my PhD, I primarily worked with **PhenoFlex** [@luedeling_phenoflex_2021], available through the **chillR** package [@luedeling_chillr_2023]. Along the way, I was asked to document my experiences,share what I learned, and what tools I created - so this website was born!
+During my PhD, I primarily worked with **PhenoFlex** [@luedeling_phenoflex_2021], available through the **chillR** package [@luedeling_chillr_2023]. Along the way, I was asked to document my experiences, share what I learned, and what tools I created - so this website was born!
 
 To support collaboration and make my workflow more accessible, I bundled my custom functions into two R packages: 
 
