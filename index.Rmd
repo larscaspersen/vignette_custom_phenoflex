@@ -38,7 +38,7 @@ These packages are currently available via GitHub only (not CRAN). Over time, so
 
 This site serves as a hub for all the tweaks, adaptations, and custom versions of **PhenoFlex** I developed through my PhD. I hope it proves useful for others working in this field — whether you're new to PhenoFlex or looking to explore it more deeply.
 
-If you run into any issues, have questions, or just want to connect, don't hesitate to reach  out! You can open an issue on t[GitHub](https://github.com/larscaspersen/vignette_custom_phenoflex) or email me (or my supervisor Eike Luedeling). Details are on the left-hand side of the page. 
+If you run into any issues, have questions, or just want to connect, don't hesitate to reach  out! You can open an issue on [GitHub](https://github.com/larscaspersen/vignette_custom_phenoflex) or email me (or my supervisor Eike Luedeling). Details are on the left-hand side of the page. 
 
  ⚠️ **Note:** This collection of vignettes is *not* a  general introduction to PhenoFlex. For that, please check out:
  
