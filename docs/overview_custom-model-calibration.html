@@ -2252,9 +2252,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --bkgd-color:       #01161E;
   }
 
+  .main-container {
+    max-width: 1200px; /* default is around 800px */
+  }
+
+  .distill-article .content {
+    max-width: 1200px;
+  }
+
+
   /*-- Additional custom styles --*/
   /* Add any additional CSS rules below                      */
-
 
   h1 {
     color: #335e51;
@@ -2320,6 +2328,61 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article li {
       margin-bottom: 0em;
   }
+
+  pre code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Inline code only */
+  d-article p > code {
+    background-color: #dcdcdc;
+    color: #333333;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  /* Full code chunk block */
+  div.sourceCode {
+    display: inline-block;
+    background-color: #2e2e2e;
+    padding: 1em;
+    border-radius: 6px;
+    margin: 1.5em 0;
+    max-width: 100%;         /* Prevents overflow */
+    white-space: nowrap;  
+  }
+
+  /* Code lines inside chunk */
+  div.sourceCode pre {
+    background-color: #dcdcdc; /* Let the container show */
+    color: #333333;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Code itself */
+  div.sourceCode code {
+    background-color: transparent; /* No inner background */
+    color: inherit;
+  }
+
+  d-article .r-output, 
+  d-arcticle .r-output-html, 
+  d-article .r-output-stdout, 
+  d-article pre.r-output {
+    background-color: blue;
+    color: pink;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: -10px;
+  }
+
+
+
 
   /*change buttons on homepage*/
   .btn-outline-dark {
